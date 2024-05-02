@@ -17,4 +17,6 @@ public interface ChatTopicRepo extends MongoRepository<ChatTopic,String>{
     Set<UserStatus> findAllMembersByNameTopic(String nameTopic);
     
     ChatTopic findOneByNameTopic(String nameTopic);
+     
+    //ChatTopic findByUserStatus(UserStatus userStatus);
 }

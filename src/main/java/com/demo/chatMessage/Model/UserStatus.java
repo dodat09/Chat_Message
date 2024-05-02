@@ -1,6 +1,12 @@
 package com.demo.chatMessage.Model;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection="userstatus")
 public class UserStatus {
+   @Id
+   private String id;
    private User user;
    private Status status;
    private Role role;

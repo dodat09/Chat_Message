@@ -209,7 +209,7 @@ function connect(event) {
 
 
 function onConnected() {
-    stompClient.subscribe(`/user/${nickname}/queue/messages`, onMessageReceived);
+    stompClient.subscribe(`/user/${nickname}`, onMessageReceived);
    
     stompClient.subscribe(`/user/public`, onMessageReceived);
 
@@ -223,9 +223,9 @@ function onConnected() {
 }
 
 async function findAndDisplayConnectedUsers() {
-    const connectedUsersResponse = await fetch('/users');
+    const connectedUsersResponse = await fetch('/connected');
     let connectedUsers = await connectedUsersResponse.json();
-    connectedUsers = connectedUsers.filter(user => user.nickName !== nickname);
+  //  connectedUsers = connectedUsers.filter(user => user.nickName !== nickname);
     const connectedUsersList = document.getElementById('connectedUsers');
     connectedUsersList.innerHTML = '';
 
@@ -242,15 +242,30 @@ async function findAndDisplayConnectedUsers() {
 function appendUserElement(user, connectedUsersList) {
     const listItem = document.createElement('li');
     listItem.classList.add('user-item');
-    listItem.id = user.nickName;
+   // listItem.id = user.nickName;
+    if(user.chatId==null){
+		listItem.id= user.nameTopic;
+	}else{
+		listItem.id=user.chatId;
+	}
+
 
     const userImage = document.createElement('img');
     userImage.src = '../img/user_icon.png';
-    userImage.alt = user.fullName;
+   // userImage.alt = user.fullName;
+    if(user.recipientId==null){
+		userImage.alt=user.nameTopic;
+	}else{
+		userImage.alt=user.recipientId;
+	}
 
     const usernameSpan = document.createElement('span');
-    usernameSpan.textContent = user.fullName;
-
+    //usernameSpan.textContent = user.fullName;
+    if(user.recipientId==null){
+		userSpan.alt=user.nameTopic;
+	}else{
+		userSpan.alt=user.recipientId;
+	}
     const receivedMsgs = document.createElement('span');
     receivedMsgs.textContent = '0';
     receivedMsgs.classList.add('nbr-msg', 'hidden');
@@ -273,7 +288,7 @@ function userItemClick(event) {
     const clickedUser = event.currentTarget;
     clickedUser.classList.add('active');
 
-    selectedUserId = clickedUser.getAttribute('id');
+    chatId = clickedUser.getAttribute('id');
     fetchAndDisplayUserChat().then();
 
     const nbrMsg = clickedUser.querySelector('.nbr-msg');
@@ -297,11 +312,19 @@ function displayMessage(senderId, content) {
 }
 
 async function fetchAndDisplayUserChat() {
-    const userChatResponse = await fetch(`/messages/${nickname}/${selectedUserId}`);
+    const userChatResponse = await fetch(`/messages/${chatId}`);
     const userChat = await userChatResponse.json();
     chatArea.innerHTML = '';
     userChat.forEach(chat => {
-        displayMessage(chat.senderId, chat.content);
+		// kiêm tra xem chatId là chữ hay số nếu là chữ thì là chatIdTopic
+		//tương đương với chatMessageTopic
+		if(isDigit(chatId)){
+			displayMessage(chat.userId, chat.content);
+		}else{// ngược lại thì là chatIdRoom tương đương với chatMessage
+		
+			displayMesssage(chat.senderId,chat.content);
+		}
+        
     });
     chatArea.scrollTop = chatArea.scrollHeight;
 }
