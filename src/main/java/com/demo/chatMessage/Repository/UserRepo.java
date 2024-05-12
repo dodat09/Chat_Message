@@ -12,5 +12,5 @@ import com.demo.chatMessage.Model.User.Status;
 public interface UserRepo extends MongoRepository<User,String>{
    List<User> findAllByStatus(Status status);
    
-   User findByNickName(String userId);
+   User findByUserName(String username);
 }

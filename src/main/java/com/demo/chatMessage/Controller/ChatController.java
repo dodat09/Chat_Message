@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import com.demo.chatMessage.Model.ChatMessage;
 import com.demo.chatMessage.Model.ChatMotification;
 import com.demo.chatMessage.Service.ChatMessageService;
-import com.demo.chatMessage.Service.ChatTopicService;
 
 @Controller
 //@RequestMapping("/")

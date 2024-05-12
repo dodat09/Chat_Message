@@ -8,11 +8,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "user")
 public class User {
   @Id
-  private String nickName;
-  private String fullName;
+  private String id;
+  
+  private String userName;
+  private String password;
   private Set<String> chatId;
   private Set<User> frientId;
   private Status status;
+  private String role;
   
   public enum Status {
 	  ONLINE ,
@@ -23,29 +26,40 @@ public User() {
 	
 }
 
-public User(String nickName, String fullName, Set<String> chatId, Set<User> frientId, Status status) {
+public User(String id, String userName, String password, Set<String> chatId, Set<User> frientId, Status status,
+		String role) {
 	super();
-	this.nickName = nickName;
-	this.fullName = fullName;
+	this.id = id;
+	this.userName = userName;
+	this.password = password;
 	this.chatId = chatId;
 	this.frientId = frientId;
 	this.status = status;
+	this.role = role;
 }
 
-public String getNickName() {
-	return nickName;
+public String getId() {
+	return id;
 }
 
-public void setNickName(String nickName) {
-	this.nickName = nickName;
+public void setId(String id) {
+	this.id = id;
 }
 
-public String getFullName() {
-	return fullName;
+public String getUserName() {
+	return userName;
 }
 
-public void setFullName(String fullName) {
-	this.fullName = fullName;
+public void setUserName(String userName) {
+	this.userName = userName;
+}
+
+public String getPassword() {
+	return password;
+}
+
+public void setPassword(String password) {
+	this.password = password;
 }
 
 public Set<String> getChatId() {
@@ -72,7 +86,13 @@ public void setStatus(Status status) {
 	this.status = status;
 }
 
+public String getRole() {
+	return role;
+}
+
+public void setRole(String role) {
+	this.role = role;
+}
 
 
-  
 }

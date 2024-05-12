@@ -1,6 +1,5 @@
 package com.demo.chatMessage.Service;
 
-import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
@@ -64,8 +63,8 @@ public class ChatRoomService {
 		int randomId = random.nextInt(900000)+100000;
 		String chatId = String.valueOf(randomId);
 		//lấy user từ senderId
-		User user = userRepo.findByNickName(senderId);
-		User friend = userRepo.findByNickName(recipientId);
+		User user = userRepo.findByUserName(senderId);
+		User friend = userRepo.findByUserName(recipientId);
 		//cấu hình lại các thông tin như chatId giữa user và lưu danh sách bạn bè
 		Set<String> listChatIdSender = user.getChatId();
 		listChatIdSender.add(chatId);

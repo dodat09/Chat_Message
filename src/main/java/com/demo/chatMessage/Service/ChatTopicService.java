@@ -77,7 +77,7 @@ public class ChatTopicService {
 	public ChatTopic addUserInTopic(String nameTopic ,String userId) {
 		//lấy chatTopic thông qua nameTopic và xét lại giống như tạo topic nhưng khác Role
 		ChatTopic chatTopic = chatTopicRepo.findOneByNameTopic(nameTopic);
-		User user = userRepo.findByNickName(userId);
+		User user = userRepo.findByUserName(userId);
 		UserStatus userStatus = new UserStatus();
 		userStatus.setUser(user);
 		userStatus.setRole(Role.USER);

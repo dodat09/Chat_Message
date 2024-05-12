@@ -8,12 +8,15 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.demo.chatMessage.Model.ChatRoom;
 import com.demo.chatMessage.Model.ChatTopic;
 import com.demo.chatMessage.Model.User;
 import com.demo.chatMessage.Model.User.Status;
+import com.demo.chatMessage.Model.UserStatus.Role;
 import com.demo.chatMessage.Repository.ChatRoomRepo;
 import com.demo.chatMessage.Repository.ChatTopicRepo;
 import com.demo.chatMessage.Repository.UserRepo;
@@ -30,19 +33,45 @@ public class UserService {
 	@Autowired
 	private ChatTopicRepo chatTopicRepo;
 	
+	
+	
 	private static final Logger logger = LoggerFactory.getLogger(UserService.class);
-	//lưu user
-	public void saveUser(User user) {
-		Set<User> listFriend = new HashSet();
-		Set<String> listChatId = new HashSet();
-		user.setChatId(listChatId);
-		user.setFrientId(listFriend);
+	
+	
+	//save user
+	public void saveUser(String username) {
+		User user = userRepo.findByUserName(username);
 		user.setStatus(Status.ONLINE);
 		userRepo.save(user);
 	}
+	//tạo account với thông tin user
+	public User sighUp(String username,String password) {
+		User user1 = userRepo.findByUserName(username);
+		if(user1==null) {
+		User user = new User();
+		PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		String encoderPassword = passwordEncoder.encode(password);
+		Set<User> listFriend = new HashSet();
+		Set<String> listChatId = new HashSet();
+		user.setUserName(username);
+		user.setPassword(encoderPassword);
+		user.setChatId(listChatId);
+		user.setFrientId(listFriend);
+		user.setRole("USER");
+		user.setStatus(Status.ONLINE);
+	
+		userRepo.save(user);
+		return user;
+		}
+		logger.error(username +" Đã tồn tại !");
+		return user1;
+	}
+	
+	//login
+	  
 	//ngắt kết nối user bằng Status.Off
 	public void disconect(User user) {
-		var storeUser = userRepo.findById(user.getNickName()).orElse(null);
+		var storeUser = userRepo.findById(user.getUserName()).orElse(null);
 		if(storeUser != null) {
 			storeUser.setStatus(Status.OFFLINE);
 			userRepo.save(storeUser);
@@ -53,7 +82,7 @@ public class UserService {
 	// rồi lấy ra tất cả các chatId đã lưu
 	public List<Object> findConnectedUsers(String nickName){
 		
-		User user = userRepo.findByNickName(nickName);
+		User user = userRepo.findByUserName(nickName);
 		// tạo một list các connected có thể gồm có user và group
 		List<Object> listConnected = new ArrayList<>();
 		//lấy SetId từ User đang đăng nhập
@@ -70,7 +99,7 @@ public class UserService {
 			}else {
 				//lấy chatRoom từ chatId và từ đó lấy được userRecipient rồi thêm vào listConnected
 				ChatRoom chatRoom = chatRoomRepo.findByChatId(chatId);
-				User userRecipient = userRepo.findByNickName(chatRoom.getRecipientId());
+				User userRecipient = userRepo.findByUserName(chatRoom.getRecipientId());
 				listConnected.add(userRecipient);
 				
 			}
@@ -84,12 +113,12 @@ public class UserService {
 	}
 	
 	public User getUserById(String userId) {
-		return userRepo.findByNickName(userId);
+		return userRepo.findByUserName(userId);
 	}
 	
 	public User addFriend(String userId,String friendId) {
-		User add = userRepo.findByNickName(userId);
-		User friend = userRepo.findByNickName(friendId);
+		User add = userRepo.findByUserName(userId);
+		User friend = userRepo.findByUserName(friendId);
 		if(add!=null&&friend!=null) {
 			Set<User> listfriendInAdd = add.getFrientId();
 		    Set<User> listfriendInFriend = friend.getFrientId();
@@ -105,7 +134,7 @@ public class UserService {
 				   add.setFrientId(listfriendInAdd);
 				   userRepo.save(add);
 				   userRepo.save(friend);
-				   logger.info("Bạn và "+friend.getNickName()+"đã là bạn bè của nhau từ ngày hôm nay!");
+				   logger.info("Bạn và "+friend.getUserName()+"đã là bạn bè của nhau từ ngày hôm nay!");
 			      }
 		       }
 	        }else {		     
